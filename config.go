@@ -32,9 +32,15 @@ var (
 // DumpPath is the path to dump each
 // search page json file on the host
 // machine
+//
+// StartPage and EndPage are where the
+// crawler starts and stops
 type Configuration struct {
 	Port       int16 `json:"port,omitempty"`
 	portString string
+
+	StartPage uint64 `json:"start"`
+	EndPage   uint64 `json:"end"`
 
 	DumpPath         string `json:"dump_path"`
 	TimeDelaySeconds uint64 `json:"time_delay,omitempty"`
@@ -69,4 +75,6 @@ func ParseConfigFromFile() error {
 		Config.Port = 8080
 	}
 	Config.portString = fmt.Sprintf(":%v", Config.Port)
+
+	return nil
 }

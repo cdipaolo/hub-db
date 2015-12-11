@@ -9,7 +9,7 @@ import (
 // it so only requests with the specified method (POST,
 // GET, etc) will go through to the handler.
 func HTTPHandlerWithMethod(method string, h http.HandlerFunc) http.HandlerFunc {
-	return func(r http.Response, req http.Request) {
+	return func(r http.ResponseWriter, req *http.Request) {
 		r.Header().Add("Content-Type", "application/json")
 		if req.Method != method {
 			r.WriteHeader(http.StatusMethodNotAllowed)
