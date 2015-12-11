@@ -1,6 +1,12 @@
-package server
+package main
 
-import ()
+import (
+	"encoding/json"
+	"flag"
+	"fmt"
+	"io/ioutil"
+	"path/filepath"
+)
 
 const (
 	configPath string = "./config.json"
@@ -22,10 +28,15 @@ var (
 // TimeDelaySeconds is the number of seconds
 // to wait between crawling each search page
 // (between each ~350 image batches)
+//
+// DumpPath is the path to dump each
+// search page json file on the host
+// machine
 type Configuration struct {
 	Port       int16 `json:"port,omitempty"`
 	portString string
 
+	DumpPath         string `json:"dump_path"`
 	TimeDelaySeconds uint64 `json:"time_delay,omitempty"`
 }
 
