@@ -34,7 +34,12 @@ var (
 // machine
 //
 // StartPage and EndPage are where the
-// crawler starts and stops
+// crawler starts and stops. Note that
+// the actual stop page might be ±5
+// when the load is distributed across
+// multiple processors (distribution
+// works best on a non-prime number
+// of processors)
 type Configuration struct {
 	Port       int16 `json:"port,omitempty"`
 	portString string

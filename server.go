@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
 	"strconv"
 	"time"
 
@@ -27,9 +28,14 @@ func init() {
 	http.Handle("/", Get(HandleStatus))
 }
 
+// CrawlPornHub crawls pages from pornhub
+// for images, starting at 'start' (inclusive)
+// and ending at 'stop' (exclusive). Pages
+// are dumped to the filepath described in
+// the config file
 func CrawlPornHub(start, stop uint64) {
 	running = true
-	for i := start; i <= stop; i++ {
+	for i := start; i < stop; i++ {
 		p, err := crawl.GetBasePageByPageNumber(i)
 		if err != nil {
 			errors = append(errors, err)
@@ -44,7 +50,7 @@ func CrawlPornHub(start, stop uint64) {
 			continue
 		}
 
-		err = ioutil.WriteFile(Config.DumpPath+strconv.FormatUint(i, 10)+"_page.json", bytes, os.ModePerm)
+		err = ioutil.WriteFile(path.Join(Config.DumpPath, strconv.FormatUint(i, 10)+"_page.json"), bytes, os.ModePerm)
 		if err != nil {
 			errors = append(errors, err)
 		}
@@ -53,6 +59,8 @@ func CrawlPornHub(start, stop uint64) {
 }
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	flag.Parse()
 	err := ParseConfigFromFile()
 	if err != nil {
@@ -60,7 +68,12 @@ func main() {
 	}
 
 	startTime = time.Now()
-	go CrawlPornHub(Config.StartPage, Config.EndPage)
+
+	delta := (Config.EndPage - Config.StartPage) / uint64(runtime.NumCPU())
+	for i := Config.StartPage; i < Config.EndPage-1; i += delta {
+		log.Printf("INIT : 1 Crawler crawling [%v, %v)", i, i+delta)
+		go CrawlPornHub(i, i+delta)
+	}
 
 	log.Printf("Listening at http://127.0.0.1%v ...\n", Config.portString)
 	log.Fatal(http.ListenAndServe(Config.portString, nil))
