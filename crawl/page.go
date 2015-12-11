@@ -17,7 +17,7 @@ import (
 const (
 	ImageDateFormat             = "January 2, 2006"
 	BaseURI                     = "http://pornhub.com"
-	BasePageURIAllCategoriesFmt = "http://www.pornhub.com/albums/female-gay-male-misc-shemale-straight-uncategorized?o=mv&t=a&page=%d"
+	BasePageURIAllCategoriesFmt = "http://www.pornhub.com/albums/female-gay-male-shemale-straight?o=mv&page=%d"
 )
 
 var (
