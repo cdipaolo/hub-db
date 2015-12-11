@@ -65,7 +65,6 @@ func GetBasePageByPageNumber(page uint64) (*model.BasePage, error) {
 	// now get some albums
 	albums := []model.Album{}
 	doc.Find(".photoAlbumListBlock > a").Each(func(i int, s *goquery.Selection) {
-		print("|")
 		// Now get the some mets info about the albums
 		link, exists := s.Attr("href")
 		if !exists {
@@ -90,9 +89,6 @@ func GetBasePageByPageNumber(page uint64) (*model.BasePage, error) {
 // and returns a corresponding *model.Album for
 // that page
 func GetAlbumFromURI(uri string) (*model.Album, error) {
-	// print a "." so you know something is happening!
-	print(".")
-
 	album := &model.Album{
 		URI: uri,
 	}

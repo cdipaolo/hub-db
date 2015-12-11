@@ -28,12 +28,14 @@ func init() {
 }
 
 func CrawlPornHub(start, stop uint64) {
+	running = true
 	for i := start; i <= stop; i++ {
 		p, err := crawl.GetBasePageByPageNumber(i)
 		if err != nil {
 			errors = append(errors, err)
 			continue
 		}
+		log.Printf("CRAWL [page = %v, albums = %v]", i, len(p.Albums))
 
 		// save to json and dump to file
 		bytes, err := json.Marshal(p)
@@ -47,6 +49,7 @@ func CrawlPornHub(start, stop uint64) {
 			errors = append(errors, err)
 		}
 	}
+	running = false
 }
 
 func main() {
@@ -57,6 +60,7 @@ func main() {
 	}
 
 	startTime = time.Now()
+	go CrawlPornHub(Config.StartPage, Config.EndPage)
 
 	log.Printf("Listening at http://127.0.0.1%v ...\n", Config.portString)
 	log.Fatal(http.ListenAndServe(Config.portString, nil))
