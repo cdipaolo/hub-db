@@ -24,7 +24,7 @@ func HandleStatus(r http.ResponseWriter, req *http.Request) {
 	bytes, err := json.Marshal(model.HealthCheckResponse{
 		Status:       status,
 		SaveTo:       Config.DumpPath,
-		Uptime:       time.Now().Sub(startTime),
+		Uptime:       time.Now().Sub(startTime).String(),
 		PagesCrawled: pageCount,
 		Errors:       errors,
 	})
@@ -43,5 +43,5 @@ func HandleStatus(r http.ResponseWriter, req *http.Request) {
 	r.WriteHeader(http.StatusOK)
 	r.Write(bytes)
 
-	log.Printf("\nGET / [PagesCrawled = %v, Errors = %v]\n", pageCount, len(errors))
+	log.Printf("GET / [PagesCrawled = %v, Errors = %v]\n", pageCount, len(errors))
 }
