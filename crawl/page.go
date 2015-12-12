@@ -113,7 +113,7 @@ func GetAlbumFromURI(uri string) (*model.Album, error) {
 	album.UpvotePercent = float64(percent) / 100
 
 	votes := AlbumVotesRegexp.FindString(doc.Find("#ratingAlbumInfo > div").Text())
-	if votes == "" {
+	if len(votes) < 8 {
 		return nil, fmt.Errorf("Couldn't find the album votes in < %v >", uri)
 	}
 	// chop the "(x votes" to "x" and convert
@@ -124,7 +124,7 @@ func GetAlbumFromURI(uri string) (*model.Album, error) {
 	album.Votes = uint64(votesInt)
 
 	views := doc.Find("#photoAlbumRatingBox > .photoBoxContContainer > #likeBlockContent > #ratingAlbumInfo > div#viewsPhotAlbumCounter").Text()
-	if views == "" {
+	if views < 7 {
 		return nil, fmt.Errorf("Couldn't find the album views in < %v >", uri)
 	}
 	// chop the "x views" to "x" and convert
@@ -209,7 +209,7 @@ func GetImageFromURI(uri string) (*model.Image, error) {
 	image.Views = uint64(viewsInt)
 
 	commentsString := doc.Find("#cmtWrapper > h2 > span").Text()
-	if commentsString == "" {
+	if commentsString < 3 {
 		return nil, fmt.Errorf("Couldn't find the number of comments in < %v >", uri)
 	}
 	// cut "(x)" into "x" and convert
@@ -225,7 +225,10 @@ func GetImageFromURI(uri string) (*model.Image, error) {
 	})
 	image.Tags = tags
 
-	date := ImageTimestampRegex.FindString(doc.Find("#photoWrapper > .photoColumnRight > #userInformation > ul").Text())[12:]
+	date := ImageTimestampRegex.FindString(doc.Find("#photoWrapper > .photoColumnRight > #userInformation > ul").Text())
+	if len(date) < 11 {
+		return nil, fmt.Errorf("Couldn't find the image timestamp in < %v >", uri)
+	}
 	image.Timestamp, err = time.Parse(ImageDateFormat, date)
 	if err != nil {
 		return nil, err
