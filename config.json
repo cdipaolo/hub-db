@@ -1,7 +1,7 @@
 {
     "port": 8080,
     "start": 1,
-    "end": 650,
+    "end": 510,
     "dump_path": "./data",
     "time_delay": 2
 }

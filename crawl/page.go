@@ -2,6 +2,7 @@ package crawl
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -73,7 +74,7 @@ func GetBasePageByPageNumber(page uint64) (*model.BasePage, error) {
 		}
 		album, err := GetAlbumFromURI(BaseURI + link)
 		if err != nil {
-			fmt.Printf("%v\n", err)
+			log.Printf("ERROR - CRAWL - %v\n", err)
 			return
 		}
 
@@ -136,7 +137,11 @@ func GetAlbumFromURI(uri string) (*model.Album, error) {
 	// this is a little hackey but it'll let me get only
 	// the text not in any child nodes, delete any tabs
 	// and newlines, and remove the leading space
-	album.Segment = CutTabsAndNewlines.Replace(doc.Find("#segmentCont").Children().Remove().End().Text())[1:]
+	segment := doc.Find("#segmentCont").Children().Remove().End().Text()
+	if segment == "" {
+		return nil, fmt.Errorf("Couldn't get segment from album page in < %v >", uri)
+	}
+	album.Segment = CutTabsAndNewlines.Replace(segment)[1:]
 	tags := []model.Tag{}
 	doc.Find(".tagLabel").Each(func(i int, s *goquery.Selection) {
 		tags = append(tags, model.Tag(s.Text()))

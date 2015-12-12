@@ -55,6 +55,9 @@ func CrawlPornHub(start, stop uint64) {
 		if err != nil {
 			errors = append(errors, err)
 		}
+		pageCount++
+
+		time.Sleep(Config.TimeDelaySeconds * time.Second)
 	}
 	running = false
 }
@@ -70,11 +73,12 @@ func main() {
 
 	startTime = time.Now()
 
-	delta := (Config.EndPage - Config.StartPage) / uint64(runtime.NumCPU())
+	/*delta := (Config.EndPage - Config.StartPage) / uint64(runtime.NumCPU())
 	for i := Config.StartPage; i < Config.EndPage-1; i += delta {
 		log.Printf("INIT : 1 Crawler crawling [%v, %v)", i, i+delta)
 		go CrawlPornHub(i, i+delta)
-	}
+	}*/
+	go CrawlPornHub(Config.StartPage, Config.EndPage)
 
 	log.Printf("Listening at http://127.0.0.1%v ...\n", Config.portString)
 	log.Fatal(http.ListenAndServe(Config.portString, nil))
