@@ -137,11 +137,10 @@ func GetAlbumFromURI(uri string) (*model.Album, error) {
 	// this is a little hackey but it'll let me get only
 	// the text not in any child nodes, delete any tabs
 	// and newlines, and remove the leading space
-	segment := doc.Find("#segmentCont").Children().Remove().End().Text()
-	if segment == "" {
-		return nil, fmt.Errorf("Couldn't get segment from album page in < %v >", uri)
+	segment := CutTabsAndNewlines.Replace(doc.Find("#segmentCont").Children().Remove().End().Text())
+	if segment != "" {
+		album.Segment = segment[1:]
 	}
-	album.Segment = CutTabsAndNewlines.Replace(segment)[1:]
 	tags := []model.Tag{}
 	doc.Find(".tagLabel").Each(func(i int, s *goquery.Selection) {
 		tags = append(tags, model.Tag(s.Text()))
