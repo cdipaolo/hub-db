@@ -3,5 +3,5 @@
     "start": 1,
     "end": 510,
     "dump_path": "./data",
-    "time_delay": 2
+    "time_delay": 20
 }

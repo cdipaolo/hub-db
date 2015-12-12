@@ -11,7 +11,7 @@ type Image struct {
 	URI              string    `json:"uri,omitempty"`
 	Votes            uint64    `json:"votes"`
 	UpvotePercent    float64   `json:"upvote_percent,omitempty"`
-	Views            uint64    `json:"vites"`
+	Views            uint64    `json:"views"`
 	NumberOfComments uint64    `json:"num_comments"`
 	PopularComments  []Comment `json:"popular_comments,omitempty"`
 	Tags             []Tag     `json:"tags,omitempty"`
