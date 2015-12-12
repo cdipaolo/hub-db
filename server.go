@@ -57,7 +57,7 @@ func CrawlPornHub(start, stop uint64) {
 		}
 		pageCount++
 
-		time.Sleep(Config.TimeDelaySeconds * time.Second)
+		time.Sleep(time.Duration(Config.TimeDelaySeconds) * time.Second)
 	}
 	running = false
 }

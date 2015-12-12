@@ -3,7 +3,6 @@ package crawl
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"testing"
 
 	"github.com/cdipaolo/hub-db/model"
@@ -84,6 +83,7 @@ func TestGetAlbumFromURIShouldPass2(t *testing.T) {
 	assert.Len(t, album.Images, 20, "Album should have 20 images")
 }
 
+/*
 func TestGetBasePageByPageNumberShouldPass1(t *testing.T) {
 	p, err := GetBasePageByPageNumber(PageNumber1)
 	assert.Nil(t, err, "Error should be nil")
@@ -98,4 +98,4 @@ func TestGetBasePageByPageNumberShouldPass1(t *testing.T) {
 
 	_, err = f.Write(j)
 	assert.Nil(t, err, "File write error should be nil")
-}
+}*/

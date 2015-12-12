@@ -253,7 +253,13 @@ func GetImageFromURI(uri string) (*model.Image, error) {
 func getCommentFromSelection(s *goquery.Selection) *model.Comment {
 	c := &model.Comment{}
 
-	c.Text = CutTabsAndNewlines.Replace(s.Find(".commentMessage").Text())
+	// don't get the '1 upvotes' or '. Reply'
+	comment := s.Find(".commentMessage").Clone().Children().Remove().End().Text()
+	if comment == "" {
+		fmt.Println("Couldn't get comment text")
+		return nil
+	}
+	c.Text = CutTabsAndNewlines.Replace(comment)
 
 	upvotes, err := strconv.Atoi(s.Find(".voteTotal").Text())
 	if err != nil {
