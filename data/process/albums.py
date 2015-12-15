@@ -16,7 +16,7 @@ class MRDeriveAlbumDataset(MRJob):
         data = json.loads(line)
         ## yield each album after processing
         for album in data["albums"]:
-            album["album_id"] = os.path.basename(album["URI"])
+            album["album_id"] = int(os.path.basename(album["URI"]))
 
             ## only include image id's and not full info
             images = []
