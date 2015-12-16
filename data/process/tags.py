@@ -3,8 +3,8 @@ import json
 import mrjob.protocol
 from mrjob.job import MRJob
 
-class MRDeriveTagsDataset(MRJob):
-    """MRDeriveTagsDataset
+class MRDeriveTagsGraph(MRJob):
+    """MRDeriveTagsGraph
     this MRJob MapReduce job takes the albums
     dataset and generates associations between
     which tags are seen with which other tags
@@ -57,4 +57,4 @@ class MRDeriveTagsDataset(MRJob):
 
 
 if __name__ == "__main__":
-    MRDeriveTagsDataset.run()
+    MRDeriveTagsGraph.run()
