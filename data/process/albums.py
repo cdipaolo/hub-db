@@ -4,7 +4,6 @@ import re
 
 import mrjob.protocol
 from mrjob.job import MRJob
-from mrjob.step import MRStep
 
 IMAGE_ID_RE = re.compile(r"[0-9]+")
 
