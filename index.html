@@ -54,6 +54,7 @@ type Album struct {
   Images         []uint64    `json:"images"`         // array of associated image ids
   UpvotePercent  float64     `json:"upvote_percent"` // percentage of votes that were upvotes (as opposed to downvotes)
   Segment        PHubSegment `json:"segment"`        // segment of site
+  Tags           []string    `json:"tags"`           // associated album tags
 }
 
 // PHubSegment describes all possible
@@ -92,8 +93,16 @@ const (
       <p>The comments dataset holds all comments to every image that has been crawled within the full dataset.</p>
       
       <p>STRUCTURE</p>
-      <pre>type _ struct {
-  f
+      <pre>// Comment holds information about individual
+// comments on images
+type Comment struct {
+  Username string `json:"username"` // commenter's PornHub username
+  AlbumId uint64 `json:"album_id"` // unique album identifier from PornHub
+  NetUpvotes uint64 `json:"net_upvotes"` // number of net upvotes on the comment
+  ImageId uint64 `json:"image_id"` // unique image identifier  from PornHub
+  Text string `json:"text"` // comment text
+  AlbumTitle string `json:"album_title"` // title of associated album
+  Segment PHubSegment `json:"segment"` // segment of associated album
 }</pre>
       
       <p>EXAMPLE</p>
@@ -109,39 +118,88 @@ const (
       
       <!-- images -->
       <h4 id="images">images.json ⟶ {images_1.json, images_2.json}</h4>
-      <p>short description</p>
+      <p>The images dataset holds all images (without comments), along with their associated timestamps, tags, etc. and id's referencing the image and album. <b>This is where the CDN image links are held.</b></p>
       
       <p>STRUCTURE</p>
-      <pre>type _ struct {
-  f
+      <pre>type Image struct {
+  Votes            uint64      `json:"votes"`        // number of image votes
+  Views            uint64      `json:"views"`        // number of image views
+  Timestamp        time.Time   `json:"timestamp"     // when the image was posted
+  AlbumId          uint64      `json:"album_id"`     // unique album identifier from PornHub
+  URI              string      `json:"uri"`          // CDN image link (ie. image.jpg file resource)
+  ImageId          uint64      `json:"image_id"`     // unique image identifier from PornHub
+  NumberOfComments uint64      `json:"num_comments"` // number of comments on the image
+  AlbumTitle       string      `json:"album_title"`  // title of associated album
+  Segment          PHubSegment `json:"segment"`      // segment of associated album
+  Tags             []string    `json:"tags"`         // associated album tags
 }</pre>
       
       <p>EXAMPLE</p>
-      <pre>{}</pre>
+      <pre>{
+  "votes": 0,
+  "views": 383,
+  "timestamp": "2015-01-14T00:00:00Z",
+  "album_id": 4928501,
+  "uri": "http://i0.cdn2b.image.pornhub.phncdn.com/m=e-yaaGqaa/pics/albums/004/928/501/72364841/original_72364841.jpg",
+  "image_id": 72364841,
+  "num_comments": 0,
+  "album_title": "Anime/Cartoons/3D",
+  "segment": "Gay",
+  "tags": ["anime-sex", "batman-hentai", "cartoon-sex", "dragon-ball-z", "hentai", "marvel-super-heroes", "penes-enormes", "superman-hentai"]
+}</pre>
       
       <!-- tag_frequencies -->
-      <h4 id="tag_frequencies">file</h4>
-      <p>short description</p>
+      <h4 id="tag_frequencies">tag_frequencies.tsv</h4>
+      <p>A compiled list of the frequencies of all tags with string length greater than 3 and frequency greater than 5 times seen (ie. "xx" would not be recorded for frequency but "hardcore-anal" and "xxx" would be if both of those have more than 5 occurences). All tags are converted to lowercase. The format for this (and tags.csv) is <b>not JSON</b>. The file is a tab separated csv with 2 columns: {}</p>
       
-      <p>STRUCTURE</p>
-      <pre>type _ struct {
-  f
+      <p>STRUCTURE (note this won't be trivially unmarshalled because it's not JSON)</p>
+      <pre>type Frequency struct {
+  Tag   string // the name of the tag
+  Count uint64 // the number of times the tag has been seen in an album
 }</pre>
       
-      <p>EXAMPLE</p>
-      <pre>{}</pre>
+      <p>EXAMPLE (from <code>$ head -n 20 tag_frequencies.tsv</code>)</p>
+      <pre>"18yo"	6
+"3some"	7
+"abs"	18
+"abuse"	7
+"abused"	11
+"action"	7
+"actress"	11
+"add"	7
+"adult"	24
+"african"	7
+"akira"	7
+"album"	9
+"aletta"	7
+"alexis"	18
+"all"	41
+"allie"	9
+"amateur"	1083
+"amateur-blowjob"	6
+"amateur-couple"	6
+"amateur-milf"	8</pre>
       
       <!-- tags -->
-      <h4 id="tags">file</h4>
-      <p>short description</p>
+      <h4 id="tags">tags.csv</h4>
+      <p>The tags dataset holds the tag graph. Each row of <code>tags.csv</code> is a tab separated association between a tag (left column) and an array of all associated tags that have been seen with that tag, along with the number of times they have been seen together. As a unit, this file describes an undirected, weighted graph.</p>
+      <p>Note that each edge array includes the node tag (self referencing node). This tells you the total frequency of the tag throughout the dataset. It also means that every node included has an edge array.</p>
       
-      <p>STRUCTURE</p>
-      <pre>type _ struct {
-  f
-}</pre>
+      <p>STRUCTURE (note this won't be trivially unmarshalled because it's not JSON)</p>
+      <pre>type TagNode struct {
+  Tag   string // the tag
+  Edges []Edge // an array of edges
+}
+
+type Edge struct {
+  Tag  string // the edge tag
+  Seen uint64 // number of times the tag has been seen
+}
+
+</pre>
       
-      <p>EXAMPLE</p>
-      <pre>{}</pre>
+      <p>EXAMPLE (from <code>$ head -n 1 tags.csv</code>)</p>
+      <pre>"#fuckme"	[["#fuckme", 1], ["horny", 1], ["#wantsex", 1]]</pre>
     </div>
     
   </body>

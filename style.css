@@ -7,7 +7,7 @@ body {
 .header {
   padding: 10px;
   min-height: 6.5em;
-  background-color: #4E45FF;
+  background-color: #ff4949;
   background-image: 
     linear-gradient(
       40deg, 
@@ -43,10 +43,29 @@ body {
   padding-top: 1em;
 }
 
+h4 {
+  margin-top: -1em;
+  margin-left: -2em;
+  margin-right: -2em;
+  padding: 1em 2em 0 2em;
+  border-top: 1px solid black;
+}
+
+h4#albums {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
 pre {
-  background-color: #3d3d3d;
-  color: white;
+  background-color: #bebebe;
+  color: #ffffff;
   margin-left: -2em;
   margin-right: -2em;
   padding: 2em
+}
+
+pre#downloading {
+  background-color: #ffffff;
+  color: #3d3d3d;
 }
