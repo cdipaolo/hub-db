@@ -6,22 +6,143 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-      <!-- Header -->
-      <div class="header">
-        <div class="header-line">
-            <h2>hub-db</h2>
-            <a href="https://github.com/cdipaolo/hub-db"><img src="Octicons-mark-github.svg"></a>
-        </div>
-        <h3>adult images dataset for ML, NLP, and whatever else</h3>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-line">
+          <h2>hub-db</h2>
+          <a href="https://github.com/cdipaolo/hub-db"><img id="github-cat" src="Octicons-mark-github.svg"/></a>
       </div>
+      <h3>adult images dataset for ML, NLP, and whatever else</h3>
+    </div>
 
       <!-- Content -->
-      <div class="body">
-          <p>hub-db contains data of images from the adult pornography website <a href="http://pornhub.com">PornHub</a>. Within <a href="https://github.com/cdipaolo/hub-db">the repository</a> is the code used to scrape the data, as well as a data folder which contains all the raw and processed data. Along with image links (no images have been downloaded, only links to the images) we crawl image and album metadata, such as tags, comments, views, votes, upvote percentages, etc. which should make the dataset widely applicable.</p>
+    <div class="body">
+      <p>hub-db contains data of images from the adult pornography website <a href="http://pornhub.com">PornHub</a>. Within <a href="https://github.com/cdipaolo/hub-db">the repository</a> is the code used to scrape the data, as well as a data folder which contains all the raw and processed data. Along with image links (no images have been downloaded, only links to the images) we crawl image and album metadata, such as tags, comments, views, votes, upvote percentages, etc. which should make the dataset widely applicable.</p>
+      
+      <h3>Downloading The Data</h3>
+      <p>Option 1 - download specific data files and/or ignore the code to generate the data</p>
+      <pre id="downloading">1. Go to http://kinolien.github.io/gitzip/
+2. input https://github.com/cdipaolo/hub-db/tree/master/data into the search bar and click 'search'
+3. download any files you'd like</pre>
+      
+      <p>Option 2 - clone the repository</p>
+      <pre id="downloading"># using https
+$ git clone https://github.com/cdipaolo/hub-db.git
+
+# using ssh
+$ git clone git@github.com:cdipaolo/hub-db.git</pre>
 
 
-        <h4>Basic Structure and Formatting</h4>
-        <p>The raw data follows the structure outlined in the README of the repository and is generated page by page along the most-viewed images search on PornHub. The processed data has been produced from MRJob (MapReduce) jobs ran along that raw data. Processed data includes album level data, image level data, and comments level data. All of this data is in files where each line is a JSON object. Further basic processing on the album tags gives a csv file showing each tag and it's frequency, as well as a csv file showing the number of observed occurrences of each other tag with any given tag (ie. nodes and edges in the graph of tag occurrences)</p>
-      </div>
+      <!-- Data Schemas -->
+      <h3>Data Schema</h3>
+      <p>In each of the processed data files, every line is a JSON object. Here we show the structure of each file's JSON objects in Go syntax (to show types) as well as an example object. Note that the Go syntax structure docs weren't used (necessarily) to crawl the data, but you could use them to pull data from the dataset.</p>
+      
+      <!-- albums -->
+      <h4 id="albums">albums.json</h4>
+      <p>The preprocessed albums dataset contains broad information about albums without going including all information about the associated images (besides the associated image-id's). Note that <b>tags within albums are the same across all images within that album</b>.</p>
+      
+      <p>STRUCTURE</p>
+      <pre>// Album contains album information without
+// directly containing the images associated
+type Album struct {
+  Votes          uint64      `json:"votes"`          // number of upvotes
+  Title          string      `json:"title"`          // title of album
+  Views          uint64      `json:"views"`          // number of album views
+  NumberOfImages uint64      `json:"num_images"`     // number of images in album
+  AlbumId        uint64      `json:"album_id"`       // unique album id (from PornHub)
+  URI            string      `json:"uri"`            // href link to the album
+  Images         []uint64    `json:"images"`         // array of associated image ids
+  UpvotePercent  float64     `json:"upvote_percent"` // percentage of votes that were upvotes (as opposed to downvotes)
+  Segment        PHubSegment `json:"segment"`        // segment of site
+}
+
+// PHubSegment describes all possible
+// segments of the PornHub website.
+// Relatively few albums are in the 'Gay',
+// 'Shemale', 'Miscellaneous', or ''
+// segments
+type PHubSegment string
+const (
+  Blank         PHubSegment = ""
+  Gay           PHubSegment = "Gay"
+  Miscellaneous PHubSegment = "Miscellaneous"
+  Shemale       PHubSegment = "Shemale"
+  SoloFemale    PHubSegment = "Solo Female"
+  SoloMale      PHubSegment = "Solo Male"
+  StraightSex   PHubSegment = "Straight Sex"
+)</pre>
+      
+      <p>EXAMPLE</p>
+      <pre>{
+  "votes": 75,
+  "title": "Tanner Mayes of Foot Fetish Daily",
+  "views": 11184,
+  "num_images": 16,
+  "album_id": 100062,
+  "URI": "http://pornhub.com/album/100062",
+  "images": [892148, 892155, 892157, 892160, 892162, 892164, 892166, 892168, 892170, 892171, 892174, 892176, 892178, 892180, 892181, 892183],
+  "upvote_percent": 0.99,
+  "segment": "Solo Female",
+  "tags": ["Feet", "Fetish", "Foot", "Mayes", "Puerto", "Rican", "Soles", "Tanner", "Teen", "Toes"]
+}
+</pre>
+      
+      <!-- comments -->
+      <h4 id="comments">comments.json</h4>
+      <p>The comments dataset holds all comments to every image that has been crawled within the full dataset.</p>
+      
+      <p>STRUCTURE</p>
+      <pre>type _ struct {
+  f
+}</pre>
+      
+      <p>EXAMPLE</p>
+      <pre>{
+  "username": "Cockinside",
+  "album_id": 6619972,
+  "net_upvotes": 0,
+  "image_id": 100012292,
+  "text": "Jesus, so fuckable",
+  "album_title": "Me :3",
+  "segment": "Solo Female"
+}</pre>
+      
+      <!-- images -->
+      <h4 id="images">images.json ⟶ {images_1.json, images_2.json}</h4>
+      <p>short description</p>
+      
+      <p>STRUCTURE</p>
+      <pre>type _ struct {
+  f
+}</pre>
+      
+      <p>EXAMPLE</p>
+      <pre>{}</pre>
+      
+      <!-- tag_frequencies -->
+      <h4 id="tag_frequencies">file</h4>
+      <p>short description</p>
+      
+      <p>STRUCTURE</p>
+      <pre>type _ struct {
+  f
+}</pre>
+      
+      <p>EXAMPLE</p>
+      <pre>{}</pre>
+      
+      <!-- tags -->
+      <h4 id="tags">file</h4>
+      <p>short description</p>
+      
+      <p>STRUCTURE</p>
+      <pre>type _ struct {
+  f
+}</pre>
+      
+      <p>EXAMPLE</p>
+      <pre>{}</pre>
+    </div>
+    
   </body>
 </html>
