@@ -42,3 +42,11 @@ body {
   padding: 2em;
   padding-top: 1em;
 }
+
+pre {
+  background-color: #3d3d3d;
+  color: white;
+  margin-left: -2em;
+  margin-right: -2em;
+  padding: 2em
+}
