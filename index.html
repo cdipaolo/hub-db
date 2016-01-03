@@ -15,9 +15,9 @@
       <h3>adult images dataset for ML, NLP, and whatever else</h3>
     </div>
 
-      <!-- Content -->
+    <!-- Content -->
     <div class="body">
-      <p>hub-db contains data of images from the adult pornography website <a href="http://pornhub.com">PornHub</a>. Within <a href="https://github.com/cdipaolo/hub-db">the repository</a> is the code used to scrape the data, as well as a data folder which contains all the raw and processed data. Along with image links (no images have been downloaded, only links to the images) we crawl image and album metadata, such as tags, comments, views, votes, upvote percentages, etc. which should make the dataset widely applicable.</p>
+      <p>hub-db contains data associated with images from the adult pornography website <a href="http://pornhub.com">PornHub</a>. Within <a href="https://github.com/cdipaolo/hub-db">the repository</a> is the code used to scrape the data, as well as a <code>data/</code> folder which contains all the raw and processed data. Along with image links (no images have been downloaded, only links to the images) we crawl image and album metadata, such as tags, comments, views, votes, upvote percentages, etc. which should make the dataset widely applicable.</p>
       
       <h3>Downloading The Data</h3>
       <p>Option 1 - download specific data files and/or ignore the code to generate the data</p>
@@ -35,7 +35,19 @@ $ git clone git@github.com:cdipaolo/hub-db.git</pre>
 
       <!-- Data Schemas -->
       <h3>Data Schema</h3>
-      <p>In each of the processed data files, every line is a JSON object. Here we show the structure of each file's JSON objects in Go syntax (to show types) as well as an example object. Note that the Go syntax structure docs weren't used (necessarily) to crawl the data, but you could use them to pull data from the dataset.</p>
+      <p>In each of the processed data files (except for the tsv/csv tag datasets), every line is a JSON object. Here we show the structure of each file's JSON objects in Go syntax (to show types and allow for easy processing if you choose to use Go) as well as an example object. Note that the Go syntax structure docs weren't (necessarily) used to crawl the data, but you could use them to pull data from the preprocessed dataset.</p>
+      
+      <p>The raw data isn't documented here, but you can see the code used to generate it as well as the associated Go structs which describe types within <a href="https://github.com/cdipaolo/hub-db">the repository</a>. That data is crawled per search page, not per album or some other unit. Within each page, albums are crawled, recursively finding all associated images and tags. If you want to get albums as a unit, quickly being able to find the images and comments, etc., then you might want to look at that instead of the preprocessed datasets.</p>
+      
+      TABLE OF CONTENTS:
+      
+      <ul>
+        <li><a href="#albums">album.json</a></li>
+        <li><a href="#comments">comments.json</a></li>
+        <li><a href="#images">images.json</a></li>
+        <li><a href="#tag_frequencies">tag_frequencies.tsv</a></li>
+        <li><a href="#tags">tags.csv</a></li>
+      </ul>
       
       <!-- albums -->
       <h4 id="albums">albums.json</h4>
@@ -150,7 +162,7 @@ type Comment struct {
       
       <!-- tag_frequencies -->
       <h4 id="tag_frequencies">tag_frequencies.tsv</h4>
-      <p>A compiled list of the frequencies of all tags with string length greater than 3 and frequency greater than 5 times seen (ie. "xx" would not be recorded for frequency but "hardcore-anal" and "xxx" would be if both of those have more than 5 occurences). All tags are converted to lowercase. The format for this (and tags.csv) is <b>not JSON</b>. The file is a tab separated csv with 2 columns: {}</p>
+      <p>A compiled list of the frequencies of all tags with string length greater than 3 and frequency greater than 5 times seen (ie. "xx" would not be recorded for frequency but "hardcore-anal" and "xxx" would be if both of those have more than 5 occurences). All tags are converted to lowercase. The format for this (and tags.csv) is <b>not JSON</b>. The file is a tab separated csv with 2 columns: {tag, count}. File is sorted by tag alphabetically.</p>
       
       <p>STRUCTURE (note this won't be trivially unmarshalled because it's not JSON)</p>
       <pre>type Frequency struct {
@@ -182,7 +194,7 @@ type Comment struct {
       
       <!-- tags -->
       <h4 id="tags">tags.csv</h4>
-      <p>The tags dataset holds the tag graph. Each row of <code>tags.csv</code> is a tab separated association between a tag (left column) and an array of all associated tags that have been seen with that tag, along with the number of times they have been seen together. As a unit, this file describes an undirected, weighted graph.</p>
+      <p>The tags dataset holds the tag graph. Each row of <code>tags.csv</code> is a tab separated association between a tag (left column) and an array of all associated tags that have been seen with that tag, along with the number of times they have been seen together. As a unit, this file describes an undirected, weighted graph. File is sorted by node tag alphabetically.</p>
       <p>Note that each edge array includes the node tag (self referencing node). This tells you the total frequency of the tag throughout the dataset. It also means that every node included has an edge array.</p>
       
       <p>STRUCTURE (note this won't be trivially unmarshalled because it's not JSON)</p>
