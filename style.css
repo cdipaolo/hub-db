@@ -51,18 +51,26 @@ h4 {
   border-top: 1px solid black;
 }
 
+/* top schema field - no border */
 h4#albums {
   margin: 0;
   padding: 0;
   border: none;
 }
 
+/* block code */
 pre {
   background-color: #bebebe;
   color: #ffffff;
   margin-left: -2em;
   margin-right: -2em;
   padding: 2em
+}
+
+/* inline code */
+code {
+  background-color: #bebebe; 
+  color: white;
 }
 
 pre#downloading {
